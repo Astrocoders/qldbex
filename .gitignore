@@ -16,6 +16,8 @@
 # If the VM crashes, it generates a dump, let's ignore it too.
 erl_crash.dump
 
+.svn
+
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
@@ -27,3 +29,9 @@ qldbex-*.tar
 .elixir_ls
 
 .DS_Store
+
+priv/bundlex
+
+bench/snapshots
+
+c_src/qldbex/ion
