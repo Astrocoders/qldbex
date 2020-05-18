@@ -1,12 +1,14 @@
 #pragma once
 
-typedef struct HsmCredentials UnifexNifState;
+typedef struct Noop UnifexNifState;
 
-struct HsmCredentials
+struct Noop
 {
 };
 
 typedef UnifexNifState State;
+
+#define DECNUMDIGITS 34
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,3 +18,4 @@ typedef UnifexNifState State;
 #include "_generated/qldbex.h"
 #include "./ion/ion.h"
 #include "./base64/base64.h"
+#include "./ionhash.h"

@@ -35,3 +35,5 @@ priv/bundlex
 bench/snapshots
 
 c_src/qldbex/ion
+
+__pycache__

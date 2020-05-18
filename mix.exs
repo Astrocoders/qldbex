@@ -24,8 +24,9 @@ defmodule Qldbex.MixProject do
   defp deps do
     [
       {:unifex, "~> 0.2.0"},
-      {:ex_aws_qldb, git: "https://github.com/Astrocoders/ex_aws_qldb"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:ex_aws, "~> 2.1"},
+      {:benchfella, "~> 0.3.0", only: [:dev, :test]}
     ]
   end
 
