@@ -7,7 +7,7 @@ defmodule Qldbex.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      compilers: [:unifex, :bundlex] ++ Mix.compilers(),
+      compilers: [:unifex, :bundlex, :elixir_make] ++ Mix.compilers(),
       deps: deps(),
       package: package()
     ]
@@ -26,6 +26,7 @@ defmodule Qldbex.MixProject do
       {:unifex, "~> 0.2.0"},
       {:poison, "~> 3.1"},
       {:ex_aws, "~> 2.1"},
+      {:elixir_make, "~> 0.4", runtime: false},
       {:benchfella, "~> 0.3.0", only: [:dev, :test]}
     ]
   end
