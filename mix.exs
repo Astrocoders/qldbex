@@ -7,7 +7,7 @@ defmodule Qldbex.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      compilers: [:unifex, :bundlex, :elixir_make] ++ Mix.compilers(),
+      compilers: [:elixir_make, :unifex, :bundlex] ++ Mix.compilers(),
       deps: deps(),
       package: package()
     ]
