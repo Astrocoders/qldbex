@@ -46,7 +46,7 @@ defmodule Qldbex do
   end
 
   defp cast_value(value) when is_list(value) do
-    "#{Enum.map(value, &cast_value/1)}"
+    "[ #{Enum.map(value, &cast_value/1) |> Enum.join(",")} ]"
   end
 
   defp cast_value(value) when is_map(value) do
@@ -83,8 +83,16 @@ defmodule Qldbex do
     _ = QLDBSession.end_session(session_token)
   end
 
-  defp transform_map(item_map) do
-    pairs = Map.keys(item_map) |> Enum.map(&{Atom.to_string(&1), item_map[&1]})
+  defp cast_key(key) when is_atom(key) do
+    Atom.to_string(key)
+  end
+
+  defp cast_key(key) when is_binary(key) do
+    key
+  end
+
+  def transform_map(item_map) do
+    pairs = Map.keys(item_map) |> Enum.map(&{cast_key(&1), item_map[&1]})
 
     pairs_mapped =
       Enum.map(pairs, fn {k, v} -> "'#{k}': #{cast_value(v)}" end)
