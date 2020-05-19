@@ -26,7 +26,8 @@ defmodule Qldbex do
 
   defp process_command_response!(response) do
     Enum.map(response, fn %{"IonBinary" => item} ->
-      Native.from_ion(item)
+      {:ok, ion} = Native.from_ion(item)
+      ion
     end)
   end
 
