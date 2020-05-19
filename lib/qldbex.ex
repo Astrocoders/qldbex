@@ -40,6 +40,10 @@ defmodule Qldbex do
     "#{base_query(table_name)} WHERE #{condition}"
   end
 
+  defp cast_value(%DateTime{} = value) when is_map(value) do
+    "`#{DateTime.to_iso8601(value)}`"
+  end
+
   defp cast_value(value) when is_list(value) do
     "#{Enum.map(value, &cast_value/1)}"
   end
@@ -56,8 +60,26 @@ defmodule Qldbex do
     "#{value}"
   end
 
+  defp cast_value(value) when is_boolean(value) do
+    "#{value}"
+  end
+
   defp cast_value(value) do
     "'#{value}'"
+  end
+
+  def request_mutation_without_return!(statement, parameters \\ []) do
+    ledger_name = get_ledger_name!()
+
+    {response, session_token, transaction_id} = send_command!(statement, parameters, ledger_name)
+
+    _response_processed = process_command_response!(response)
+
+    _ =
+      QLDBSession.commit_transaction(session_token, transaction_id, statement, parameters)
+      |> ExAws.request()
+
+    _ = QLDBSession.end_session(session_token)
   end
 
   defp transform_map(item_map) do
@@ -113,7 +135,7 @@ defmodule Qldbex do
   end
 
   def create_table!(table_name) do
-    request!("CREATE TABLE #{table_name}")
+    request_mutation_without_return!("CREATE TABLE #{table_name}")
   end
 
   def sum_by_field!(table_name, field, clause) do
@@ -129,28 +151,40 @@ defmodule Qldbex do
   end
 
   def insert_many!(table_name, items) do
-    values = Enum.map(items, &transform_map/1) |> Enum.join(", ")
+    values =
+      Enum.map(items, fn item ->
+        Map.merge(item, %{inserted_at: DateTime.utc_now()}) |> transform_map()
+      end)
+      |> Enum.join(", ")
 
     request_mutation!(table_name, "INSERT INTO #{table_name} <<#{values}>>")
   end
 
   def insert_one!(table_name, item) do
-    value = transform_map(item)
+    value = Map.merge(item, %{inserted_at: DateTime.utc_now()}) |> transform_map()
 
     request_mutation!(table_name, "INSERT INTO #{table_name} VALUE #{value}")
   end
 
   def update_by_clause!(table_name, clause, value, table_alias) do
+    now = DateTime.utc_now() |> DateTime.to_iso8601()
+
     request_mutation!(
       table_name,
-      "UPDATE #{table_name} AS #{table_alias} SET #{value} WHERE #{clause}"
+      "UPDATE #{table_name} AS #{table_alias} SET #{value}, #{table_alias}.updated_at = `#{now}` WHERE #{
+        clause
+      }"
     )
   end
 
   def update_by_id!(table_name, id, value, table_alias) do
+    now = DateTime.utc_now() |> DateTime.to_iso8601()
+
     request_mutation!(
       table_name,
-      "UPDATE #{table_name} AS #{table_alias} BY pid SET #{value} WHERE pid = '#{id}'"
+      "UPDATE #{table_name} AS #{table_alias} BY pid SET #{value}, #{table_alias}.updated_at = `#{
+        now
+      }` WHERE pid = '#{id}'"
     )
   end
 
