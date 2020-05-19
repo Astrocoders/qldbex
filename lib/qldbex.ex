@@ -1,15 +1,15 @@
 defmodule Qldbex do
   @moduledoc false
-  alias Qldbex.Session
   alias Qldbex.Native
+  alias ExAws.QLDBSession
 
   defp prepare_request!(ledger_name) do
     {:ok, %{"StartSession" => %{"SessionToken" => session_token}}} =
-      Session.start_session(ledger_name)
+      QLDBSession.start_session(ledger_name)
       |> ExAws.request()
 
     {:ok, %{"StartTransaction" => %{"TransactionId" => transaction_id}}} =
-      Session.start_transaction(session_token) |> ExAws.request()
+      QLDBSession.start_transaction(session_token) |> ExAws.request()
 
     {session_token, transaction_id}
   end
@@ -18,7 +18,7 @@ defmodule Qldbex do
     {session_token, transaction_id} = prepare_request!(ledger_name)
 
     {:ok, %{"ExecuteStatement" => %{"FirstPage" => %{"Values" => values}}}} =
-      Session.execute_statement(session_token, transaction_id, statement, parameters)
+      QLDBSession.execute_statement(session_token, transaction_id, statement, parameters)
       |> ExAws.request()
 
     {values, session_token, transaction_id}
@@ -85,7 +85,7 @@ defmodule Qldbex do
 
     {response, session_token, _} = send_command!(statement, parameters, ledger_name)
 
-    _ = Session.end_session(session_token)
+    _ = QLDBSession.end_session(session_token)
 
     process_command_response!(response)
   end
@@ -98,10 +98,10 @@ defmodule Qldbex do
     response_processed = process_command_response!(response)
 
     _ =
-      Session.commit_transaction(session_token, transaction_id, statement, parameters)
+      QLDBSession.commit_transaction(session_token, transaction_id, statement, parameters)
       |> ExAws.request()
 
-    _ = Session.end_session(session_token)
+    _ = QLDBSession.end_session(session_token)
 
     ids =
       Enum.map(response_processed, &Poison.decode/1)
