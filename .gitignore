@@ -31,6 +31,8 @@ qldbex-*.tar
 .DS_Store
 
 priv/bundlex
+priv/decNumber
+priv/ionc
 
 bench/snapshots
 

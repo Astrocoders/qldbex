@@ -19,7 +19,10 @@ defmodule Qldbex.BundlexProject do
         ],
         libs: ["decNumber", "ionc", "json-c", "crypto"],
         includes: ["c_src/qldbex"],
-        lib_dirs: ["ion-c/build/release/decNumber", "ion-c/build/release/ionc"]
+        lib_dirs: [
+          Path.join(:code.priv_dir(:qldbex), "decNumber"),
+          Path.join(:code.priv_dir(:qldbex), "ionc")
+        ]
       ]
     ]
   end
