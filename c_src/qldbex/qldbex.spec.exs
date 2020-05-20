@@ -14,7 +14,7 @@ spec(
     {:ok :: label, decoded :: string} | {:error :: label, error_reason :: string}
 )
 
-spec(
-  generate_commit_digest(transaction_id :: string, statement :: string) ::
-    {:ok :: label, digest :: string} | {:error :: label, error_reason :: string}
-)
+# spec(
+#   generate_commit_digest(transaction_id :: string, statement :: string) ::
+#     {:ok :: label, digest :: string} | {:error :: label, error_reason :: string}
+# )

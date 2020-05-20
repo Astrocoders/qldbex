@@ -270,33 +270,33 @@ UNIFEX_TERM from_ion(UnifexEnv *env, char *encoded64_ion)
   return result;
 }
 
-UNIFEX_TERM generate_commit_digest(UnifexEnv *env, char *transaction_id, char *statement)
-{
-  initialize_python();
+// UNIFEX_TERM generate_commit_digest(UnifexEnv *env, char *transaction_id, char *statement)
+// {
+//   initialize_python();
 
-  size_t transaction_id_hash_len;
-  char *transaction_id_hash_encoded = NULL;
-  generate_ion_hash(transaction_id, transaction_id_hash_encoded);
-  char *transaction_id_hash = base64_decode(transaction_id_hash, &transaction_id_hash_len);
+//   size_t transaction_id_hash_len;
+//   char *transaction_id_hash_encoded = NULL;
+//   generate_ion_hash(transaction_id, transaction_id_hash_encoded);
+//   char *transaction_id_hash = base64_decode(transaction_id_hash, &transaction_id_hash_len);
 
-  free(transaction_id_hash_encoded);
+//   free(transaction_id_hash_encoded);
 
-  size_t statement_hash_len;
-  char *statement_hash_encoded = NULL;
-  generate_ion_hash(statement, statement_hash_encoded);
-  char *statement_hash = base64_decode(statement_hash, &statement_hash_len);
+//   size_t statement_hash_len;
+//   char *statement_hash_encoded = NULL;
+//   generate_ion_hash(statement, statement_hash_encoded);
+//   char *statement_hash = base64_decode(statement_hash, &statement_hash_len);
 
-  free(statement_hash_encoded);
+//   free(statement_hash_encoded);
 
-  unsigned char *final_hash[SHA256_DIGEST_LENGTH];
-  dot(transaction_id_hash, statement_hash, final_hash);
+//   unsigned char *final_hash[SHA256_DIGEST_LENGTH];
+//   dot(transaction_id_hash, statement_hash, final_hash);
 
-  char *final_hash_base64 = base64_encode(final_hash, SHA256_DIGEST_LENGTH);
+//   char *final_hash_base64 = base64_encode(final_hash, SHA256_DIGEST_LENGTH);
 
-  UNIFEX_TERM result = generate_commit_digest_result_ok(env, final_hash_base64);
+//   UNIFEX_TERM result = generate_commit_digest_result_ok(env, final_hash_base64);
 
-  return result;
-}
+//   return result;
+// }
 
 void handle_destroy_state(UnifexEnv *env, State *state)
 {

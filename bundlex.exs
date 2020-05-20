@@ -18,7 +18,7 @@ defmodule Qldbex.BundlexProject do
           "qldbex.c",
           "ionhash.c"
         ],
-        libs: ["decNumber", "ionc", "json-c", "crypto", "python3.8"],
+        libs: ["decNumber", "ionc", "json-c", "crypto"],
         includes: ["c_src"]
       ]
     ]

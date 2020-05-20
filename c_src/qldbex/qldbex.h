@@ -18,4 +18,4 @@ typedef UnifexNifState State;
 #include "_generated/qldbex.h"
 #include "./ion/ion.h"
 #include "./base64/base64.h"
-#include "./ionhash.h"
+// #include "./ionhash.h"
