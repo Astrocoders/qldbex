@@ -15,8 +15,7 @@ defmodule Qldbex.BundlexProject do
         sources: [
           "_generated/qldbex.c",
           "base64/base64.c",
-          "qldbex.c",
-          "ionhash.c"
+          "qldbex.c"
         ],
         libs: ["decNumber", "ionc", "json-c", "crypto"],
         includes: ["c_src"]
