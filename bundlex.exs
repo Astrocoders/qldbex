@@ -28,10 +28,6 @@ defmodule Qldbex.BundlexProject do
   end
 
   defp get_priv_path(folder) do
-    priv = :code.priv_dir(:qldbex)
-
-    IO.inspect(priv)
-
-    Path.join(priv, folder)
+    Application.app_dir(:qldbex, "priv/#{folder}")
   end
 end
