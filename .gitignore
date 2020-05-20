@@ -35,5 +35,10 @@ priv/bundlex
 bench/snapshots
 
 c_src/qldbex/ion
+c_src/qldbex/decNumber
 
 __pycache__
+
+ion-c
+
+c_libs
