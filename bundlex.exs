@@ -20,10 +20,18 @@ defmodule Qldbex.BundlexProject do
         libs: ["decNumber", "ionc", "json-c", "crypto"],
         includes: ["c_src/qldbex"],
         lib_dirs: [
-          Path.join(:code.priv_dir(:qldbex), "decNumber"),
-          Path.join(:code.priv_dir(:qldbex), "ionc")
+          get_priv_path("decNumber"),
+          get_priv_path("ionc")
         ]
       ]
     ]
+  end
+
+  defp get_priv_path(folder) do
+    priv = :code.priv_dir(:qldbex)
+
+    IO.inspect(priv)
+
+    Path.join(priv, folder)
   end
 end
