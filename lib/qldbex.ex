@@ -162,7 +162,9 @@ defmodule Qldbex do
   def insert_many!(table_name, items) do
     values =
       Enum.map(items, fn item ->
-        Map.merge(item, %{inserted_at: DateTime.utc_now()}) |> transform_map()
+        inserted_at = DateTime.utc_now() |> DateTime.to_iso8601()
+
+        Map.merge(item, %{inserted_at: inserted_at}) |> transform_map()
       end)
       |> Enum.join(", ")
 
@@ -170,7 +172,8 @@ defmodule Qldbex do
   end
 
   def insert_one!(table_name, item) do
-    value = Map.merge(item, %{inserted_at: DateTime.utc_now()}) |> transform_map()
+    inserted_at = DateTime.utc_now() |> DateTime.to_iso8601()
+    value = Map.merge(item, %{inserted_at: inserted_at}) |> transform_map()
 
     request_mutation!(table_name, "INSERT INTO #{table_name} VALUE #{value}")
   end
