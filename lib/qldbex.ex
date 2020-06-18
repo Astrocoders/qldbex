@@ -147,15 +147,21 @@ defmodule Qldbex do
     request_mutation_without_return!("CREATE TABLE #{table_name}")
   end
 
-  def sum_by_field!(table_name, field, clause) do
+  def sum_by_field!(table_name, field, clause \\ nil) do
+    where_clause =
+      case clause do
+        nil -> ""
+        clause -> "WHERE #{clause}"
+      end
+
     [response] =
-      request!("SELECT SUM(\"#{field}\") as total FROM #{table_name} as t WHERE #{clause}")
+      request!("SELECT SUM(\"#{field}\") as total FROM #{table_name} as t #{where_clause}")
 
-    %{"total" => total} = Poison.decode!(response)
-
-    case total do
-      "" -> 0.0
-      value -> value
+    with %{"total" => total} <- Poison.decode!(response),
+         total when is_float(total) or is_integer(total) <- total do
+      total
+    else
+      _ -> 0.0
     end
   end
 
