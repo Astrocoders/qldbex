@@ -60,6 +60,8 @@ UNIFEX_TERM to_ion(UnifexEnv *env, char *json_text)
 
   free(binary_ion);
 
+  ION_OK(env, ion_reader_close(reader));
+
   return result;
 }
 
@@ -116,6 +118,8 @@ void parse_ion(hREADER *reader, json_object *jobj)
 
       parse_ion(reader, jarray);
     }
+
+    free(field_name);
   }
 
   if (ion_type == tid_STRUCT)
@@ -159,6 +163,8 @@ void parse_ion(hREADER *reader, json_object *jobj)
         }
       }
     }
+
+    free(field_name);
   }
 
   ion_reader_get_type(*reader, &ion_type);
@@ -166,17 +172,19 @@ void parse_ion(hREADER *reader, json_object *jobj)
   if (ion_type == tid_INT)
   {
     char *field_name = get_field_name(reader);
+    int64_t value;
+    ion_reader_read_int64(*reader, &value);
+    add_to_json_object(jobj, field_name, json_object_new_int64(value));
 
-    int value;
-
-    ion_reader_read_int(*reader, &value);
-
-    add_to_json_object(jobj, field_name, json_object_new_int(value));
+    free(field_name);
   }
 
   if (ion_type == tid_DECIMAL)
   {
+
     char *field_name = get_field_name(reader);
+
+    printf("is decimal: %s\n", field_name);
 
     ION_DECIMAL value_ion_decimal;
     ion_reader_read_ion_decimal(*reader, &value_ion_decimal);
@@ -184,6 +192,8 @@ void parse_ion(hREADER *reader, json_object *jobj)
     ion_decimal_to_string(&value_ion_decimal, str_repr);
 
     add_to_json_object(jobj, field_name, json_object_new_double(strtod(str_repr, NULL)));
+
+    free(field_name);
   }
 
   if (ion_type == tid_STRING)
@@ -195,6 +205,9 @@ void parse_ion(hREADER *reader, json_object *jobj)
     char *value = ion_string_strdup(&ion_string);
 
     add_to_json_object(jobj, field_name, json_object_new_string(value));
+
+    free(field_name);
+    free(value);
   }
 
   if (ion_type == tid_BOOL)
@@ -206,13 +219,14 @@ void parse_ion(hREADER *reader, json_object *jobj)
     ion_reader_read_bool(*reader, &value);
 
     add_to_json_object(jobj, field_name, json_object_new_boolean(value));
+
+    free(field_name);
   }
 
   if (ion_type == tid_TIMESTAMP)
   {
     char *field_name = get_field_name(reader);
 
-    // iTIMESTAMP timestamp;
     ION_TIMESTAMP ion_time;
     memset(&ion_time, 0, sizeof(ION_TIMESTAMP));
 
@@ -226,6 +240,8 @@ void parse_ion(hREADER *reader, json_object *jobj)
     strftime(buf, sizeof(buf), "%FT%T%Z", localtime(&time));
 
     add_to_json_object(jobj, field_name, json_object_new_string(buf));
+
+    free(field_name);
   }
 }
 

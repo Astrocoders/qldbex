@@ -11,10 +11,11 @@
 //  return:  base64-encoded string (null-terminated)
 //           memory for output will be allocated here, free it later
 //
+
+static const char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
 char *base64_encode(const void *buf, size_t size)
 {
-  static const char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
   char *str = (char *)malloc((size + 3) * 4 / 3 + 1);
 
   char *p = str;
