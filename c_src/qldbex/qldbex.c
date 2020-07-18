@@ -184,8 +184,6 @@ void parse_ion(hREADER *reader, json_object *jobj)
 
     char *field_name = get_field_name(reader);
 
-    printf("is decimal: %s\n", field_name);
-
     ION_DECIMAL value_ion_decimal;
     ion_reader_read_ion_decimal(*reader, &value_ion_decimal);
     char str_repr[50];
