@@ -1,0 +1,4 @@
+deps
+_build/
+.elixir_ls
+ion-c

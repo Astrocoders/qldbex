@@ -65,15 +65,15 @@ UNIFEX_TERM to_ion(UnifexEnv *env, char *json_text)
   return result;
 }
 
-void add_to_json_object(json_object *jobj, char *field_name, json_object *value)
+void add_to_json_object(cJSON *jobj, char *field_name, cJSON *value)
 {
-  if (json_object_is_type(jobj, json_type_array))
+  if (cJSON_IsArray(jobj))
   {
-    json_object_array_add(jobj, value);
+    cJSON_AddItemToArray(jobj, value);
   }
   else
   {
-    json_object_object_add(jobj, field_name, value);
+    cJSON_AddItemToObject(jobj, field_name, value);
   }
 }
 
@@ -85,7 +85,7 @@ char *get_field_name(hREADER *reader)
   return ion_string_strdup(&ion_string);
 }
 
-void parse_ion(hREADER *reader, json_object *jobj)
+void parse_ion(hREADER *reader, cJSON *jobj)
 {
   ION_TYPE ion_type = tid_NULL;
 
@@ -100,7 +100,7 @@ void parse_ion(hREADER *reader, json_object *jobj)
 
   if (ion_type == tid_LIST)
   {
-    json_object *jarray = json_object_new_array();
+    cJSON *jarray = cJSON_CreateArray();
     char *field_name = get_field_name(reader);
 
     ion_reader_step_in(*reader);
@@ -126,7 +126,7 @@ void parse_ion(hREADER *reader, json_object *jobj)
   {
     char *field_name = get_field_name(reader);
 
-    json_object *nested_jobj = json_object_new_object();
+    cJSON *nested_jobj = cJSON_CreateObject();
 
     SIZE current_depth = 0;
     ion_reader_get_depth(*reader, &current_depth);
@@ -174,7 +174,7 @@ void parse_ion(hREADER *reader, json_object *jobj)
     char *field_name = get_field_name(reader);
     int64_t value;
     ion_reader_read_int64(*reader, &value);
-    add_to_json_object(jobj, field_name, json_object_new_int64(value));
+    add_to_json_object(jobj, field_name, cJSON_CreateNumber(value));
 
     free(field_name);
   }
@@ -189,7 +189,7 @@ void parse_ion(hREADER *reader, json_object *jobj)
     char str_repr[50];
     ion_decimal_to_string(&value_ion_decimal, str_repr);
 
-    add_to_json_object(jobj, field_name, json_object_new_double(strtod(str_repr, NULL)));
+    add_to_json_object(jobj, field_name, cJSON_CreateNumber(strtod(str_repr, NULL)));
 
     free(field_name);
   }
@@ -202,7 +202,7 @@ void parse_ion(hREADER *reader, json_object *jobj)
     ion_reader_read_string(*reader, &ion_string);
     char *value = ion_string_strdup(&ion_string);
 
-    add_to_json_object(jobj, field_name, json_object_new_string(value));
+    add_to_json_object(jobj, field_name, cJSON_CreateString(value));
 
     free(field_name);
     free(value);
@@ -216,7 +216,7 @@ void parse_ion(hREADER *reader, json_object *jobj)
 
     ion_reader_read_bool(*reader, &value);
 
-    add_to_json_object(jobj, field_name, json_object_new_boolean(value));
+    add_to_json_object(jobj, field_name, cJSON_CreateBool(value));
 
     free(field_name);
   }
@@ -237,7 +237,7 @@ void parse_ion(hREADER *reader, json_object *jobj)
 
     strftime(buf, sizeof(buf), "%FT%T%Z", localtime(&time));
 
-    add_to_json_object(jobj, field_name, json_object_new_string(buf));
+    add_to_json_object(jobj, field_name, cJSON_CreateString(buf));
 
     free(field_name);
   }
@@ -265,9 +265,13 @@ UNIFEX_TERM from_ion(UnifexEnv *env, char *encoded64_ion)
     return to_ion_result_error(env, ion_error_to_str(nRet));
   }
 
-  json_object *jobj = json_object_new_object();
+  cJSON *jobj = cJSON_CreateObject();
 
   parse_ion(&reader, jobj);
+
+  char *json_string = cJSON_PrintUnformatted(jobj);
+
+  cJSON_free(jobj);
 
   nRet = ion_reader_close(reader);
 
@@ -277,9 +281,10 @@ UNIFEX_TERM from_ion(UnifexEnv *env, char *encoded64_ion)
     return to_ion_result_error(env, ion_error_to_str(nRet));
   }
 
-  UNIFEX_TERM result = to_ion_result_ok(env, json_object_to_json_string(jobj));
+  UNIFEX_TERM result = to_ion_result_ok(env, json_string);
 
   free(decoded_binary);
+  free(json_string);
 
   return result;
 }
