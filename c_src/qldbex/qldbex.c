@@ -271,7 +271,8 @@ UNIFEX_TERM from_ion(UnifexEnv *env, char *encoded64_ion)
 
   char *json_string = cJSON_PrintUnformatted(jobj);
 
-  cJSON_free(jobj);
+  cJSON_Delete(jobj);
+  jobj = NULL;
 
   nRet = ion_reader_close(reader);
 
@@ -285,6 +286,9 @@ UNIFEX_TERM from_ion(UnifexEnv *env, char *encoded64_ion)
 
   free(decoded_binary);
   free(json_string);
+
+  decoded_binary = NULL;
+  json_string = NULL;
 
   return result;
 }
