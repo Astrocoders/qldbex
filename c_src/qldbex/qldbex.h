@@ -14,7 +14,7 @@ typedef UnifexNifState State;
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <json-c/json.h>
+#include <cjson/cJSON.h>
 #include "_generated/qldbex.h"
 #include "./ion/ion.h"
 #include "./base64/base64.h"
