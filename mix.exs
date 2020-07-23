@@ -25,7 +25,9 @@ defmodule Qldbex.MixProject do
     [
       {:unifex, "~> 0.2.0"},
       {:poison, "~> 3.1"},
-      {:ex_aws_qldb, git: "https://github.com/Astrocoders/ex_aws_qldb"},
+      {:ex_aws_qldb,
+       git: "https://github.com/Astrocoders/ex_aws_qldb",
+       ref: "4bf56acef6fb881e61cecf921259a56186796d14"},
       {:elixir_make, "~> 0.4", runtime: false},
       {:benchfella, "~> 0.3.0", only: [:dev, :test]}
     ]
