@@ -17,7 +17,7 @@ defmodule Qldbex.BundlexProject do
           "base64/base64.c",
           "qldbex.c"
         ],
-        libs: ["decNumber", "ionc", "json-c", "crypto"],
+        libs: ["decNumber", "ionc", "cjson", "crypto"],
         includes: ["c_src/qldbex"]
       ]
     ]

@@ -20,4 +20,58 @@ defmodule QldbexTest do
     {:ok, res} = Qldbex.Native.from_ion(@ion_binary)
     assert Poison.decode!(res) == @ion_json_representation
   end
+
+  test "both working" do
+    encoded =
+      Poison.encode!(%{
+        id: "5f17bf4ffce00d94dd21f8fa",
+        index: 0,
+        guid: "c1ce93fb-ca49-477d-b4e0-abeeb91e008c",
+        isActive: false,
+        balance: "$2,110.65",
+        picture: "http://placehold.it/32x32",
+        age: 32,
+        eyeColor: "blue",
+        name: "Glass Malone",
+        gender: "male",
+        company: "MYOPIUM",
+        email: "glassmalone@myopium.com",
+        phone: "+1 (818) 424-2087",
+        address: "275 Cumberland Street, Waterford, Oklahoma, 9275",
+        about:
+          "Sint ad laborum ipsum aute sint amet cupidatat do ipsum deserunt elit. Nisi do ea nulla id enim mollit deserunt aute cupidatat. Labore elit reprehenderit officia aliqua anim deserunt ex dolor. Nulla exercitation aliquip amet ad velit minim.\r\n",
+        registered: "2014-03-25T02:08:20 +03:00",
+        latitude: -7.33016,
+        longitude: 124.140386,
+        tags: [
+          "Lorem",
+          "irure",
+          "ullamco",
+          "dolore",
+          "amet",
+          "tempor",
+          "amet"
+        ],
+        friends: [
+          %{
+            id: 0,
+            name: "Jaclyn Wilder"
+          },
+          %{
+            id: 1,
+            name: "Sargent Montoya"
+          },
+          %{
+            id: 2,
+            name: "Burns Coleman"
+          }
+        ],
+        greeting: "Hello, Glass Malone! You have 9 unread messages.",
+        favoriteFruit: "apple"
+      })
+
+    {:ok, input} = Qldbex.Native.to_ion(encoded)
+
+    assert Qldbex.Native.from_ion(input) == {:ok, encoded}
+  end
 end
